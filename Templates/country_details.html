@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Fitventure{% endblock %}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <style>
+        body {
+            background-color: #f3f4f6;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .navbar {
+            background-color: #ff5100;
+        }
+
+        .navbar a {
+            color: #0f0e0e;
+            font-size: 18px;
+            transition: color 0.3s ease;
+        }
+
+        .navbar a:hover {
+            color: #fff;
+        }
+
+        .container,
+        .navbar {
+            padding: 20px;
+        }
+
+      
+
+
+
+
+        .recipe img,
+        .exercise img {
+            width: 100%;
+            max-width: 200px;
+            height: auto;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        .recipe,
+        .exercise,
+        .review {
+            border: 2px solid #333;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: #d98b5d;
+            transition: transform 0.3s ease;
+        }
+
+        .recipe:hover,
+        .exercise:hover,
+        .review:hover {
+            transform: translateY(-5px);
+        }
+
+        .recipe h3,
+        .exercise h3,
+        .review h3 {
+            font-size: 20px;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        .recipe p,
+        .exercise p,
+        .review p {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .exercise-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding: 20px;
+        }
+
+        .exercise {
+            width: 48%;
+            box-sizing: border-box;
+            margin-bottom: 20px;
+        }
+
+        .btn-custom {
+            background-color: #ff5100;
+            color: #a54f4f;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-custom:hover {
+            background-color: #6f42c1;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container">
+                <img src="{{url_for('static', filename='logo.png')}}" alt="Fitventure Logo" style="height: 50px; margin-right: 20px;">
+                <a class="navbar-brand" href="/">Fitventure</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/recipes">Recipes</a>
+                        </li>
+                        {% if current_user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="/favourites">Favourites</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/reviews">Reviews</a>
+                        </li>
+                        <li class="nav-item">
+                            <form action="/logout" method="post" id="logout-form">
+                                <button type="submit" class="nav-link" style="border:none; background:none;">Logout</button>
+                            </form>
+                        </li>
+                        {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="/login">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/register">Register</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="row">
+
+            <!-- Recipes Column -->
+            <div class="col-md-6">
+                <div class="section">
+                    <h2>Recipes</h2>
+                    {% for recipe in recipes %}
+                    <div class="recipe">
+                        <img src="{{ url_for('static', filename=recipe['image']) }}" alt="{{ recipe.title }}" class="img-fluid mb-3">
+                        <h3>{{ recipe.title }}</h3>
+                        <p>{{ recipe.description }}</p>
+                        <p>Ingredients: {{ recipe.ingredients }}</p>
+                        <p>Instructions: {{ recipe.instructions }}</p>
+                        <p>Nutritional Value: {{ recipe.nutritional_value }}</p>
+                        <button class="btn btn-custom" onclick="addToFavourites('{{ recipe._id }}')">Add to Favourites</button>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Reviews Column -->
+            <div class="col-md-6">
+                <div class="section">
+                    <h2>Reviews</h2>
+                    {% for review in reviews %}
+                    <div class="review">
+                        <h3>Rating: {{ review.rating }}</h3>
+                        <p>by: {{ review.username }}</p>
+                        <p>{{ review.comment }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Exercise Locations Column -->
+            <div class="col-md-12">
+                <div class="section">
+                    <h2>Exercise Locations</h2>
+                    <div class="exercise-container">
+                        {% for location in exercise_locations %}
+                        <div class="exercise">
+                            <img src="/static/{{ location.image }}" alt="{{ location.name }}">
+                            <p>{{ location.description }}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Review Form -->
+            <div class="col-md-12">
+                <div class="section">
+                    <h2>Add Review</h2>
+                    <form id="review-form" action="/add_review" method="POST">
+                        <div class="form-group">
+                            <label for="review_text">Review Text:</label>
+                            <textarea class="form-control" id="review_text" name="review_text" rows="4" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="rating">Rating:</label>
+                            <select class="form-control" id="rating" name="rating" required>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
+                        </div>
+                        <input type="hidden" id="recipe_id" name="recipe_id">
+                        <div class="form-group">
+                            <input type="button" value="Submit Review" onclick="submitReview()" class="btn btn-custom">
+                        </div>
+                    </form>
+                    {% if not current_user.is_authenticated %}
+                        <p>Please <a href="/login">login</a> to submit a review.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.5/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function addToFavourites(recipeId) {
+            document.getElementById('recipe_id').value = recipeId;
+            document.getElementById('review-form').submit();
+        }
+
+        function fetchAndDisplayReviews() {
+            fetch('/get_reviews')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const reviewsSection = document.getElementById('reviews-section');
+                reviewsSection.innerHTML = ''; // Clear existing reviews
+
+                data.reviews.forEach(review => {
+                    const reviewDiv = document.createElement('div');
+                    reviewDiv.className = 'review';
+
+                    reviewDiv.innerHTML = `
+                        <h3>Rating: ${review.rating}</h3>
+                        <p>by: ${review.username}</p>
+                        <p>${review.comment}</p>
+                    `;
+
+                    reviewsSection.appendChild(reviewDiv);
+                });
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('Error fetching reviews.');
+            });
+        }
+
+        function submitReview() {
+            const rating = document.getElementById('rating').value;
+            const reviewText = document.getElementById('review_text').value;
+            const recipeId = document.getElementById('recipe_id').value;
+
+            const data = {
+                "recipe_id": recipeId,
+                "rating": parseInt(rating),
+                "review_text": reviewText
+            };
+
+            fetch('/add_review', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.message) {
+                    alert(data.message);
+                } else {
+                    alert('Review submitted successfully!');
+                    fetchAndDisplayReviews(); // Update reviews section
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('Error submitting review. Please try again.');
+            });
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitventure - Reviews</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f3f4f6;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .navbar {
+            background-color: #ff5100;
+        }
+
+        .navbar a {
+            color: #0f0e0e;
+            font-size: 18px;
+            transition: color 0.3s ease;
+        }
+
+        .navbar a:hover {
+            color: #fff;
+        }
+
+        .container,
+        .navbar {
+            padding: 20px;
+        }
+
+        .footer {
+            background-color: #ff5100;
+            color: #fff;
+            padding: 15px 0;
+            text-align: center;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+            z-index: 1;
+        }
+
+        .review-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .review {
+            flex: 0 0 calc(50% - 20px);
+            border: 2px solid #333;
+            border-radius: 5px;
+            padding: 20px;
+            box-sizing: border-box;
+            margin-bottom: 20px;
+            background-color: #d98b5d;
+            transition: transform 0.3s ease;
+        }
+
+        .review:hover {
+            transform: translateY(-5px);
+        }
+
+        .review h3 {
+            font-size: 20px;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        .review p {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .review img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+
+        .image {
+            width: 100px;
+            height: auto;
+            margin-right: 10px;
+        }
+
+        .globe_image {
+            width: 100%;
+            height: auto;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container">
+                <img src="{{url_for('static', filename='logo.png')}}" alt="Fitventure Logo" style="height: 50px; margin-right: 20px;">
+                <a class="navbar-brand" href="/">Fitventure</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/recipes">Recipes</a>
+                        </li>
+                        {% if current_user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="/favourites">Favourites</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/reviews">Reviews</a>
+                        </li>
+                        <li class="nav-item">
+                            <form action="/logout" method="post" id="logout-form">
+                                <button type="submit" class="nav-link" style="border:none; background:none;">Logout</button>
+                            </form>
+                        </li>
+                        {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="/login">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/register">Register</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+    <div class="container mt-4">
+        <h2 class="text-center">Your Favourites</h2>
+        
+        <!-- Display Favorites -->
+        <div class="row">
+            {% for recipe in favourites %}
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <img src="{{ recipe.image_url }}" class="card-img-top" alt="{{ recipe.title }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ recipe.title }}</h5>
+                        <p class="card-text">{{ recipe.description }}</p>
+                        <p class="card-text"><strong>Ingredients:</strong> {{ recipe.ingredients }}</p>
+                        <p class="card-text"><strong>Nutritional Value:</strong> {{ recipe.nutritional_value }}</p>
+                        <a href="/recipe/{{ recipe._id }}" class="btn btn-primary">View Recipe</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    
+        <!-- Link to discover more recipes -->
+        <div class="text-center">
+            <a href="/recipes" class="btn btn-secondary">Discover More Recipes</a>
+        </div>
+    </div>
+
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.5/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

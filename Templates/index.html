@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Fitventure{% endblock %}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <style>
+        body {
+            background-color: #efefef;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .navbar {
+            background-color: #ff5100;
+        }
+
+        .navbar a {
+            color: #0f0e0e;
+            font-size: 18px;
+            transition: color 0.3s ease;
+        }
+
+        .navbar a:hover {
+            color: #fff;
+        }
+
+        .container,
+        .navbar {
+            padding: 20px;
+        }
+
+        .search-form {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .search-form input[type="text"] {
+            padding: 10px;
+            width: 60%;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .search-form button {
+            padding: 10px 20px;
+            background-color: #ff5100;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            margin-left: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .search-form button:hover {
+            background-color: #e04000;
+        }
+
+        .recipe-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-top: 40px;
+        }
+
+        .recipe {
+            flex: 0 0 48%; /* Adjust the width as needed */
+            border: 2px solid #333;
+            border-radius: 5px;
+            padding: 20px;
+            box-sizing: border-box;
+            margin-bottom: 20px;
+            background-color: #d98b5d;
+            transition: transform 0.3s ease;
+        }
+
+        .recipe:hover {
+            transform: translateY(-5px);
+        }
+
+        .recipe h3 {
+            font-size: 20px;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        .recipe p {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .recipe img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+
+        .btn-custom {
+            background-color: #ff5100;
+            color: #a54f4f;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-custom:hover {
+            background-color: #e04000;
+        }
+
+        .footer {
+            background-color: #ff5100;
+            color: #fff;
+            padding: 15px 0;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer p {
+            margin: 0;
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container">
+                <img src="{{url_for('static', filename='logo.png')}}" alt="Fitventure Logo" style="height: 50px; margin-right: 20px;">
+                <a class="navbar-brand" href="/">Fitventure</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/recipes">Recipes</a>
+                        </li>
+                        {% if current_user.is_authenticated %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="/favourites">Favourites</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/reviews">Reviews</a>
+                            </li>
+                            <li class="nav-item">
+                                <form action="/logout" method="post" id="logout-form">
+                                    <button type="submit" class="nav-link" style="border:none; background:none;">Logout</button>
+                                </form>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="/login">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/register">Register</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <h1 class="text-center">Welcome To Fitventure</h1>
+        <p class="text-center">Explore healthier journeys today!</p>
+        <p class="text-center">Struggling to stick to your diet while traveling?  Explore our recipes for local cuisines that are both delicious and nutritious. Plus, discover exercise locations and routines tailored to your destination, ensuring you can stay active wherever you are. Join us today and make healthy living a seamless part of your journey!</p>
+        <!-- Search Form -->
+        <div class="search-form">
+            <form action="/search" method="GET">
+                <input type="text" name="query" placeholder="Search country..." required>
+                <button type="submit">Search</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Recipe Section -->
+    <h1 class="text-center mt-5">Most Visited Recipes</h1>
+    <div class="recipe-container">
+        <!-- Recipe 1 -->
+        <div class="recipe">
+            <img src="{{url_for('static', filename='france.jpg')}}" alt="France" style="width: 100%;">
+            <h3>Recipe for Coq au vin</h3>
+            <p>Delicious dish that translates to 'rooster with wine'. Cooked slowly which allows the flavors to meld together, resulting in a rich and savory dish. This version reduces the calorie content by using skinless chicken, turkey bacon and a lighter red wine. Bon appétit!</p>
+            <a href="/recipes" class="btn btn-custom">View More</a>
+        </div>
+
+        <!-- Recipe 2 -->
+        <div class="recipe">
+            <img src="{{url_for('static', filename='Greece.jpg')}}" alt="Greece" style="width: 100%;">
+            <h3>Recipe for Greek Salad</h3>
+            <p>Refreshing dish from Greece known for being a combination of fresh vegetables, feta cheese, and olives.</p>
+            <a href="/recipes" class="btn btn-custom">View More</a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>2024 Fitventure - Crafting Healthier Journeys, One Recipe At A Time.</p>
+    </div>
+
+    <!-- Bootstrap Scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.5/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

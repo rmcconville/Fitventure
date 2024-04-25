@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Fitventure{% endblock %}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <style>
+        body {
+            background-color: #f3f4f6;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .navbar {
+            background-color: #ff5100;
+        }
+
+        .navbar a {
+            color: #0f0e0e;
+            font-size: 18px;
+            transition: color 0.3s ease;
+        }
+
+        .navbar a:hover {
+            color: #fff;
+        }
+
+        .container,
+        .navbar {
+            padding: 20px;
+        }
+
+        .footer {
+            background-color: #ff5100;
+            color: #fff;
+            padding: 15px 0;
+            text-align: center;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+            z-index: 1;
+        }
+
+        .recipe-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .recipe {
+            flex: 0 0 calc(50% - 20px);
+            border: 2px solid #333;
+            border-radius: 5px;
+            padding: 20px;
+            box-sizing: border-box;
+            margin-bottom: 20px;
+            background-color: #d98b5d;
+            transition: transform 0.3s ease;
+        }
+
+        .recipe:hover {
+            transform: translateY(-5px);
+        }
+
+        .recipe h3 {
+            font-size: 20px;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        .recipe p {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .recipe img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+
+        .image {
+            width: 100px;
+            height: auto;
+            margin-right: 10px;
+        }
+
+        .globe_image {
+            width: 100%;
+            height: auto;
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container">
+                <img src="{{url_for('static', filename='logo.png')}}" alt="Fitventure Logo" style="height: 50px; margin-right: 20px;">
+                <a class="navbar-brand" href="/">Fitventure</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/recipes">Recipes</a>
+                        </li>
+                            {% if current_user.is_authenticated %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="/favourites">Favourites</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/reviews">Reviews</a>
+                            </li>
+                            <li class="nav-item">
+                                <form action="/logout" method="post" id="logout-form">
+                                    <button type="submit" class="nav-link" style="border:none; background:none;">Logout</button>
+                                </form>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="/login">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/register">Register</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- First List -->
+        <div class="col-md-6">
+            <h2>Countires</h2>
+            <h4>Click on a country of your choice to discover recipes and  exercise attractions</h4>
+            <ul class="list-unstyled">
+                <li><a href="/country/France"><img src="{{ url_for('static', filename='France Flag.png') }}" alt="France" class="image"> France</a></li>
+                <li><a href="/country/Switzerland"><img src="{{ url_for('static', filename='Switzerland flag.png') }}" alt="Switzerland" class="image"> Switzerland</a></li>
+                <li><a href="/country/Greece"><img src="{{ url_for('static', filename='Greece Flag.png') }}" alt="Greece" class="image"> Greece</a></li>
+                <li><a href="/country/spain"><img src="{{ url_for('static', filename='Spain Flag.png') }}" alt="Spain" class="image"> Spain</a></li>
+                <li><a href="/country/ireland"><img src="{{ url_for('static', filename='irish Flag.png') }}" alt="Ireland" class="image"> Ireland</a></li>
+                <li><a href="/country/china"><img src="{{ url_for('static', filename='china Flag.png') }}"alt="China" class="image"> China</a></li>
+                <li><a href="/country/australia"><img src="{{ url_for('static', filename='australia Flag.png') }}" alt="Australia" class="image"> Australia</a></li>
+                <li><a href="/country/belgium"><img src="{{ url_for('static', filename='belgium Flag.png') }}" alt="Belgium" class="image"> Belgium</a></li>
+                <li><a href="/country/italy"><img src="{{ url_for('static', filename='italy Flag.png') }}" alt="Italy" class="image"> Italy</a></li>
+                <li><a href="/country/germany"><img src="{{ url_for('static', filename='germany Flag.png') }}" alt="Germany" class="image"> Germany</a></li>
+                <li><a href="/country/japan"><img src="{{ url_for('static', filename='japan Flag.png') }}" alt="Japan" class="image">Japan</a></li>
+                <li><a href="/country/india"><img src="{{ url_for('static', filename='india Flag.png') }}" alt="India" class="image">India</a></li>
+                <li><a href="/country/russia"><img src="{{ url_for('static', filename='russian Flag.png') }}" alt="Russia" class="image"> Russia</a></li>
+                <li><a href="/country/argentina"><img src="{{ url_for('static', filename='argentina Flag.png') }}" alt="Argentina" class="image"> Argentina</a></li>
+                <li><a href="/country/turkey"><img src="{{ url_for('static', filename='turkey Flag.png') }}"alt="Turkey" class="image"> Turkey</a></li>
+                <li><a href="/country/sweden"><img src="{{ url_for('static', filename='sweden Flag.png') }}" alt="Sweden" class="image"> Sweden</a></li>
+                <li><a href="/country/new zealand"><img src="{{ url_for('static', filename='new zeland Flag.png') }}" alt="New Zealand" class="image"> New Zealand</a></li>
+                <li><a href="/country/canada"><img src="{{ url_for('static', filename='canada flag.png') }}" alt="Canada" class="image"> Canada</a></li>
+            </ul>
+        </div>
+
+        
+        <div class="col-md-6">
+            <div class="image-container">
+                <img class="globe_image" src="{{ url_for('static', filename='the globe.png') }}" alt="Description of Image">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.5/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
